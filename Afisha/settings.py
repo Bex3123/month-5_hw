@@ -30,8 +30,10 @@ INSTALLED_APPS = [
     'movie_app',
     'users',
     'rest_framework.authtoken',
+    'django_filters',
 
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
