@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 
 class Director(models.Model):
@@ -29,21 +30,15 @@ class Movie(models.Model):
 
     @property
     def rating(self):
-        reviews_count = self.reviews.count()
-        sum = self.reviews.aggregate(sum('stars'))['stars__sum']
-        try:
-            return round(sum / reviews_count, 1)
-        except:
-            return 0
+        return Review.objects.filter(movie=self).aggregate(Avg('stars'))
 
 
 class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, null=True, related_name='reviews')
-    stars = models.PositiveSmallIntegerField(
-        choices=[(1, '⭐️'), (2, '⭐️⭐️'), (3, '⭐️⭐️⭐️'), (4, '⭐️⭐️⭐️⭐️'), (5, '⭐️⭐️⭐️⭐️⭐️')],
-        default=1)
+    stars = models.PositiveSmallIntegerField(choices=[(1, '⭐️'), (2, '⭐️⭐️'), (3, '⭐️⭐️⭐️'), (4, '⭐️⭐️⭐️⭐️'), (5, '⭐️⭐️⭐️⭐️⭐️')],
+                                             default=1)
 
     def __str__(self):
         return self.text
